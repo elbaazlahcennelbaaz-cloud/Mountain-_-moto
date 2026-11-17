@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>موتور الجبل - لعبة موتور مجانية (Mountain Moto)</title>
+<meta name="description" content="موتور الجبل: لعبة سباق موتور مجانية فالمنحدرات. كابراج، 8 موتورات، 4 مراحل، تطويرات فالكراج. العب فالمتصفح بلا تحميل.">
+<meta name="theme-color" content="#d9531e">
+<meta property="og:title" content="موتور الجبل - Mountain Moto">
+<meta property="og:description" content="لعبة موتور مجانية: كابراج، موتورات ومراحل مختلفة. العب دابا فالمتصفح.">
+<meta property="og:type" content="website">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<style>
+:root{--ink:#2b1a12;--hud:rgba(255,244,225,.88);--btn:#d9531e;--btn2:#7a3b1d;--btnt:#fff6e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#fbe9d0;--hud:rgba(40,22,14,.85);--btn:#e8672f;--btn2:#8a4524}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{height:100%;margin:0;overflow:hidden;background:#f2b46b;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;direction:rtl}
+.pill{background:var(--hud);color:var(--ink);padding:8px 14px;border-radius:14px;font-weight:700;font-size:16px}
+.fuel{flex:1;max-width:200px;background:var(--hud);border-radius:14px;padding:9px 12px}
+.fuel i{display:block;height:10px;border-radius:5px;background:#4a8f3c;width:100%;transition:width .1s}
+.ctl{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);width:104px;height:104px;border-radius:50%;border:0;color:var(--btnt);font-size:17px;font-weight:800;touch-action:none;direction:rtl}
+#gas{right:22px;background:var(--btn)}#whl{right:34px;bottom:calc(env(safe-area-inset-bottom,0px) + 134px);width:84px;height:84px;background:#f0a020;color:#2b1a12;font-size:15px}#brk{left:22px;background:var(--btn2)}
+.ctl.on{transform:scale(.93);filter:brightness(1.15)}
+#ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(30,15,8,.62);color:#fff6e8;text-align:center;padding:24px;direction:rtl}
+#ov h1{margin:0;font-size:34px}#ov p{margin:0;font-size:18px;max-width:320px;line-height:1.5}
+#ov button{margin-top:8px;border:0;background:var(--btn);color:#fff6e8;font-size:20px;font-weight:800;padding:14px 34px;border-radius:30px}
+#ov{justify-content:flex-start;gap:8px;padding:16px;overflow:auto}#ov>:first-child{margin-top:auto}#ov>:last-child{margin-bottom:auto}#ov h1{font-size:28px}#ov p{font-size:15px}
+.row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}.lb{width:100%;font-size:13px;opacity:.8}
+#ov .chip{margin:0;padding:8px 13px;font-size:15px;border-radius:18px;background:rgba(255,246,232,.14);color:#fff6e8;border:2px solid transparent}
+#ov .chip.sel{background:var(--btn);border-color:#fff6e8}
+#ov .sw{margin:0;padding:0;width:34px;height:34px;border-radius:50%;border:3px solid transparent}
+#ov .sw.sel{border-color:#fff6e8;transform:scale(1.18)}
+#ov #pv{position:static;width:200px;height:92px}
+.hid{display:none!important}#ov .row .lb{display:none}
+#ov .tab{margin:0;padding:8px 12px;font-size:15px;line-height:1.4;border-radius:14px;background:rgba(255,246,232,.14);color:#fff6e8;border:2px solid transparent}
+#ov .tab.sel{background:var(--btn);border-color:#fff6e8}
+#ov .tab small{display:block;font-size:12px;font-weight:600;opacity:.9}
+#mn{display:flex;direction:ltr;gap:12px;align-items:flex-start;justify-content:center;width:100%;max-width:440px}
+#tb{direction:rtl;display:flex;flex-direction:column;gap:8px;width:112px;flex:none}
+#side{direction:rtl;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+#ov #pv{max-width:100%;height:auto}
+#ov .tab{background:#f07a2a;color:#fff;width:100%;text-align:center;font-weight:800}
+#ov .tab.sel{background:#ff9a3c;border-color:#fff6e8}
+#ov .chip{background:#f07a2a;color:#fff;font-weight:700}
+#ov .chip.sel{background:#ff9a3c;border-color:#fff6e8}
+#ov #go{background:#f07a2a}
+#ld{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(#3a1a0c,#d9531e);color:#fff6e8;direction:rtl;text-align:center;padding:24px;transition:opacity .5s}
+#ld h1{margin:0;font-size:34px}#ld p{margin:0;font-size:17px;font-weight:700}
+#ld .tip{font-size:14px;opacity:.85;min-height:40px;max-width:280px;line-height:1.5}
+#ld .bar{direction:ltr;position:relative;width:min(300px,80%);height:14px;border-radius:8px;background:rgba(255,246,232,.25);margin-top:22px}
+#ld .bar i{display:block;height:100%;width:0;border-radius:8px;background:#ffb020}
+#ld .bar b{position:absolute;top:-30px;left:0;font-size:26px;transform:translateX(-50%) scaleX(-1)}
+#wl{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(#3a1a0c,#d9531e);color:#fff6e8;direction:rtl;text-align:center;padding:24px;transition:opacity .4s}
+#wl h1{margin:0;font-size:34px}#wl p{margin:0;font-size:18px;font-weight:700}
+#wl input{width:min(280px,80%);padding:14px 16px;border-radius:14px;border:2px solid #fff6e8;background:rgba(255,246,232,.14);color:#fff6e8;font-size:18px;text-align:center;font-family:inherit;user-select:text;-webkit-user-select:text;outline:0}
+#wl input::placeholder{color:rgba(255,246,232,.6)}
+#wl button{border:0;background:#f07a2a;color:#fff;font-size:22px;font-weight:800;padding:14px 48px;border-radius:30px;margin-top:6px}
+#hi{font-size:18px;font-weight:700}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ld"><h1>موتور الجبل</h1><div class="bar"><i></i><b>🏍️</b></div><p>جاري التنزيل... <span id="lp">0%</span></p><div class="tip" id="lt"></div></div>
+<script>
+(function(){
+ const ld=document.getElementById('ld'),bar=ld.querySelector('.bar i'),bk=ld.querySelector('.bar b'),pc=document.getElementById('lp'),tp=document.getElementById('lt');
+ const tips=['استعمل الكابراج باش تربح عملات زايدات','ما تطيحش على راسك! استعمل الغاز والفرامل فالهوا','جمع البيدونات الخضر باش ما يساليش البنزين','طور الموتور فالكراج بالعملات'];
+ const T=10000,t0=performance.now();
+ function f(){
+  const k=Math.min(1,(performance.now()-t0)/T);
+  bar.style.width=(k*100)+'%';bk.style.left=(k*100)+'%';pc.textContent=Math.floor(k*100)+'%';
+  tp.textContent=tips[Math.min(tips.length-1,Math.floor(k*tips.length))];
+  if(k<1)requestAnimationFrame(f);
+  else{ld.style.opacity=0;setTimeout(()=>{ld.style.display='none'},500)}
+ }
+ f();
+})();
+</script>
+<div class="hud"><div class="pill" id="dist">0 م</div><div class="fuel"><i id="fb"></i></div><div class="pill" id="best">الأفضل: 0</div></div>
+<button class="ctl" id="brk">الفرامل</button>
+<button class="ctl" id="gas">الغاز</button><button class="ctl" id="whl">كابراج</button>
+<div id="wl"><h1>موتور الجبل</h1><p id="wt">شنو سميتك؟</p><input id="un" maxlength="14" placeholder="كتب اسم المستخدم" autocomplete="off"><button id="st">ابدأ</button></div>
+<script>
+(function(){
+ const wl=document.getElementById('wl'),un=document.getElementById('un'),wt=document.getElementById('wt');
+ let saved='';try{saved=localStorage.getItem('mhc_name')||''}catch(e){}
+ un.value=saved;if(saved)wt.textContent='مرحبا بيك مرة أخرى';
+ function go(){
+  const v=un.value.trim().slice(0,14)||'لاعب';
+  uname=v;try{localStorage.setItem('mhc_name',v)}catch(e){}
+  document.getElementById('hi').textContent='مرحبا '+v+' 👋';
+  reset();
+  wl.style.opacity=0;setTimeout(()=>{wl.style.display='none'},400);
+ }
+ document.getElementById('st').onclick=go;
+ un.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+})();
+</script>
+<div id="ov"><h1>موتور الجبل</h1><div id="hi"></div><p id="msg">الغاز على اليمين، الفرامل على اليسار. فالهوا الغاز كيرفع الموتور والفرامل كتنزلو.</p><div id="mn"><div id="tb"></div><div id="side"><canvas id="pv" width="240" height="110"></canvas><div class="row" id="rl"></div><div class="row" id="rb"></div><div class="row" id="rc"></div><div class="row" id="rk"></div><div class="row" id="rg"></div></div></div><button id="go">العب</button></div>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,DPR;
+function rs(){DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener('resize',rs);rs();
+let uname=(()=>{try{return localStorage.getItem('mhc_name')||''}catch(e){return''}})();
+let G=900;const K=1500,C=60,R=13,I=500;
+const COLORS=['#d9531e','#c8341e','#e8b923','#3a8f4c','#2b7fd1','#7b4fc9','#e85a9a','#2b2b2b'];
+const BIKES=[{n:'كلاسيك',eng:1100,max:520,I:500},{n:'سريع',eng:1500,max:700,I:420},{n:'ثقيل',eng:950,max:480,I:700},{n:'Titan',eng:1250,max:600,I:560,sh:1},{n:'Panther',eng:1650,max:760,I:400,sh:2},{n:'تشوبر',eng:1000,max:500,I:800,sh:3},{n:'كروكس',eng:1200,max:560,I:440,sh:4},{n:'Falcon',eng:1800,max:820,I:380,sh:5},{n:'Cyber',eng:1500,max:740,I:430,sh:6},{n:'Mammoth',eng:1100,max:540,I:900,sh:7},{n:'Rocket',eng:2000,max:900,I:350,sh:8}];
+const CHARS=[{n:'ياسين',s:'#2b1a12',h:'#fff6e8',t:'#d9531e'},{n:'سلمى',s:'#6a2a5a',h:'#f7d3e8',t:'#e85a9a'},{n:'رائد فضاء',s:'#dfe6ee',h:'#ffffff',t:'#2b7fd1'},{n:'نينجا',s:'#161616',h:'#2a2a2a',t:'#c8341e'}];
+const LEVELS=[{n:'صحرا',g:900,amp:1,tr:1,sky:['#f6c77a','#f08e55','#c4573a'],sun:'#fff0c4',far:'#b8553a',ground:'#7a3b1d',edge:'#e0a050'},{n:'تلج',g:900,amp:1.05,tr:.8,sky:['#dcebf7','#a9cbe6','#7aa5c8'],sun:'#ffffff',far:'#9ab8d0',ground:'#e4eef5',edge:'#ffffff'},{n:'غابة',g:900,amp:1.25,tr:1,sky:['#c9e8a8','#86c77f','#3f8f5b'],sun:'#fffbd0',far:'#2f6b44',ground:'#4a3320',edge:'#62b04c'},{n:'القمر',g:450,amp:1.1,tr:1,sky:['#080c26','#1c2a5e','#3b4a8a'],sun:'#e8ecff',far:'#4a5380',ground:'#8d8f9c',edge:'#cfd2e0'}];
+const cfg=Object.assign({color:0,bike:0,char:0,level:0},(()=>{try{return JSON.parse(localStorage.getItem('mhc_cfg'))||{}}catch(e){return{}}})());
+const LV=()=>LEVELS[cfg.level]||LEVELS[0],BK=()=>BIKES[cfg.bike]||BIKES[0],CH=()=>CHARS[cfg.char]||CHARS[0];
+const gar=Object.assign({coins:100,eng:0,fuel:0,ctl:0},(()=>{try{return JSON.parse(localStorage.getItem('mhc_gar'))||{}}catch(e){return{}}})());
+function ground(x){const a=Math.min(1,Math.max(0,(x-500)/5000));return 460+a*LV().amp*(50*Math.sin(x/170)+22*Math.sin(x/60+1)+90*Math.sin(x/500))}
+let s,gas=0,brk=0,wh=0,best=0,run=false;
+try{best=+localStorage.getItem('mhc_best')||0}catch(e){}
+function reset(){s={x:100,y:ground(100)-40,vx:0,vy:0,a:0,w:0,fuel:100,cams:0,picked:{},t:0,dead:false,ph:0};document.getElementById('best').textContent=(uname?uname+' · ':'')+'الأفضل: '+best}
+reset();
+const keys={};
+function bind(id,set){const e=document.getElementById(id);const on=ev=>{ev.preventDefault();set(1);e.classList.add('on')},off=ev=>{ev.preventDefault();set(0);e.classList.remove('on')};e.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(n=>e.addEventListener(n,off));e.addEventListener('contextmenu',ev=>ev.preventDefault())}
+bind('gas',v=>gas=v);bind('brk',v=>brk=v);bind('whl',v=>wh=v);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='d')gas=1;if(e.key==='ArrowLeft'||e.key==='a')brk=1;if(e.key==='ArrowUp'||e.key==='w')wh=1});
+addEventListener('keyup',e=>{if(e.key==='ArrowRight'||e.key==='d')gas=0;if(e.key==='ArrowLeft'||e.key==='a')brk=0;if(e.key==='ArrowUp'||e.key==='w')wh=0});
+document.getElementById('go').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();initEng()}catch(e){}parts=[];G=LV().g;reset();document.getElementById('ov').style.display='none';run=true};
+const wheels=[-26,26];
+function step(dt){
+ const b=s;
+ let fx=0,fy=G,tq=0;
+ const ca=Math.cos(b.a),sa=Math.sin(b.a);
+ let grounded=false,fOn=false,rOn=false;
+ const hasFuel=b.fuel>0&&!b.dead;
+ for(const lx of wheels){
+  const ly=14,rx=ca*lx-sa*ly,ry=sa*lx+ca*ly;
+  const px=b.x+rx,py=b.y+ry;
+  const gy=ground(px),pen=py+R-gy;
+  if(pen>0){
+   grounded=true;if(lx>0)fOn=true;else rOn=true;
+   const sl=(ground(px+1)-ground(px-1))/2,nl=Math.hypot(sl,1);
+   const tx=1/nl,ty=sl/nl,nx=sl/nl,ny=-1/nl;
+   const vpx=b.vx-b.w*ry,vpy=b.vy+b.w*rx;
+   const vn=vpx*nx+vpy*ny,vt=vpx*tx+vpy*ty;
+   let Fn=Math.max(0,K*pen-C*vn);
+   let Ft=-vt*1.2;
+   if(lx<0){
+    if(gas&&hasFuel&&vt<BK().max*(1+.05*gar.eng))Ft+=BK().eng*LV().tr*(1+.08*gar.eng);
+    if(brk)Ft-=vt*9;
+   } else if(brk)Ft-=vt*9;
+   const Fx=Fn*nx+Ft*tx,Fy=Fn*ny+Ft*ty;
+   fx+=Fx;fy+=Fy;tq+=rx*Fy-ry*Fx;
+  }
+ }
+ if(rOn&&!fOn&&!b.dead&&b.a<-.2){b.wb=(b.wb||0)+dt}
+ if(!grounded){if(gas&&hasFuel)tq-=5500*(1+.1*gar.ctl);if(brk)tq+=5500*(1+.1*gar.ctl);b.w*=0.995}
+ if(wh&&hasFuel)tq-=(grounded?7500:3500)*(1+.1*gar.ctl);b.w+=tq/BK().I*dt;
+ b.vx+=fx*dt;b.vy+=fy*dt;
+ b.x+=b.vx*dt;b.y+=b.vy*dt;b.a+=b.w*dt;
+ b.ph+=b.vx*dt/R;
+ // head collision
+ const hx=b.x+ca*4-sa*-32,hy=b.y+sa*4+ca*-32;
+ if(!b.dead&&(hy+7>ground(hx)||b.a>2.6||b.a<-2.6))die();
+}
+function die(){
+ if(s.dead)return;s.dead=true;run=false;const ca=Math.cos(s.a),sa=Math.sin(s.a);shake=14;thud(1);dust(s.x,ground(s.x),14);s.rd={x:s.x+ca*2+sa*20,y:s.y+sa*2-ca*20,vx:s.vx*1.05+60,vy:s.vy-180,a:s.a,w:(s.w>=0?1:-1)*7+s.w*.3,ph:0};
+ const m=Math.max(0,Math.floor((s.x-100)/20));
+ const wc=Math.floor((s.wb||0)*3);gar.coins+=Math.floor(m/8)+wc;saveGar();if(m>best){best=m;try{localStorage.setItem('mhc_best',m)}catch(e){}}
+ setTimeout(()=>{document.getElementById('msg').textContent=(uname?uname+'، ':'')+'طحتي على راسك! المسافة: '+m+' م · ربحتي '+(Math.floor(m/8)+wc)+' عملة'+(wc?' (كابراج '+s.wb.toFixed(1)+' ث)':'');document.getElementById('go').textContent='عاود';buildMenu();document.getElementById('ov').style.display='flex'},1700);
+}
+function draw(){
+ const T=s.rd||s;const camX=T.x-W*0.32,camY=T.y-H*0.58;
+ const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,LV().sky[0]);g.addColorStop(.6,LV().sky[1]);g.addColorStop(1,LV().sky[2]);
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ // sun
+ ctx.fillStyle=LV().sun;ctx.beginPath();ctx.arc(W*.78,H*.22,38,0,7);ctx.fill();
+ // far dunes
+ ctx.fillStyle=LV().far;ctx.beginPath();ctx.moveTo(0,H);
+ for(let x=0;x<=W+20;x+=20){ctx.lineTo(x,H*.62+Math.sin((x+camX*.25)/140)*34+Math.sin((x+camX*.25)/55)*10)}
+ ctx.lineTo(W,H);ctx.fill();
+ // terrain
+ ctx.beginPath();ctx.moveTo(0,H+50);
+ for(let x=0;x<=W+10;x+=8){ctx.lineTo(x,ground(x+camX)-camY)}
+ ctx.lineTo(W,H+50);ctx.closePath();
+ ctx.fillStyle=LV().ground;ctx.fill();
+ ctx.lineWidth=7;ctx.strokeStyle=LV().edge;ctx.beginPath();
+ for(let x=0;x<=W+10;x+=8){const y=ground(x+camX)-camY;x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+ ctx.stroke();
+ // fuel cans
+ const i0=Math.floor((camX-100)/1400),i1=Math.ceil((camX+W)/1400);
+ for(let i=Math.max(1,i0);i<=i1;i++){
+  if(s.picked[i])continue;
+  const fx=i*1400,fy=ground(fx)-34-camY;
+  ctx.fillStyle='#2f7d32';ctx.fillRect(fx-camX-9,fy-12,18,24);
+  ctx.fillStyle='#fff6e8';ctx.fillRect(fx-camX-4,fy-5,8,10);
+ }
+ // bike
+ ctx.save();ctx.translate(s.x-camX,s.y-camY);ctx.rotate(s.a);
+ for(const lx of wheels){
+  ctx.save();ctx.translate(lx,14);ctx.rotate(s.ph);
+  ctx.fillStyle='#1d120c';ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fill();
+  ctx.strokeStyle='#e8d6b8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-R+3,0);ctx.lineTo(R-3,0);ctx.moveTo(0,-R+3);ctx.lineTo(0,R-3);ctx.stroke();
+  ctx.restore();
+ }
+ ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.strokeStyle=COLORS[cfg.color];ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-26,14);ctx.lineTo(-8,-4);ctx.lineTo(14,-4);ctx.lineTo(22,-14);ctx.stroke();
+ ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(14,-4);ctx.lineTo(26,14);ctx.stroke();deco(ctx);
+ if(!s.dead){ctx.strokeStyle=CH().s;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-4,-8);ctx.lineTo(2,-24);ctx.lineTo(4,-32);ctx.moveTo(2,-22);ctx.lineTo(20,-14);ctx.moveTo(-2,-6);ctx.lineTo(10,2);ctx.lineTo(14,14);ctx.stroke();
+ ctx.fillStyle=CH().h;ctx.beginPath();ctx.arc(4,-33,8,0,7);ctx.fill();
+ ctx.fillStyle=CH().t;ctx.beginPath();ctx.arc(4,-35,8,Math.PI,0);ctx.fill();}
+ ctx.restore();
+}
+function stepRider(dt){
+ const r=s.rd;if(!r)return;
+ r.vy+=G*dt;r.x+=r.vx*dt;r.y+=r.vy*dt;r.a+=r.w*dt;
+ r.ph+=dt*(8+Math.hypot(r.vx,r.vy)/40);
+ const gy=ground(r.x);
+ if(r.y+11>gy){
+  r.y=gy-11;
+  if(r.vy>0){if(r.vy>120){shake=Math.max(shake,Math.min(10,r.vy/60));thud(Math.min(1,r.vy/500));dust(r.x,gy,8)}r.vy*=-0.38;if(Math.abs(r.vy)<45)r.vy=0;r.w*=0.6}
+  r.vx*=0.992;r.w*=0.985;
+ }
+}
+function drawRider(){
+ const r=s.rd;if(!r)return;
+ const T=s.rd,camX=T.x-W*0.32,camY=T.y-H*0.58;
+ const amp=Math.min(1,Math.hypot(r.vx,r.vy)/350),f=Math.sin(r.ph)*amp;
+ ctx.save();ctx.translate(r.x-camX,r.y-camY);ctx.rotate(r.a);
+ ctx.lineCap='round';ctx.strokeStyle=CH().s;
+ ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(0,7);ctx.stroke();
+ ctx.lineWidth=5;ctx.beginPath();
+ ctx.moveTo(0,-7);ctx.lineTo(13*Math.cos(f+.5),-7+13*Math.sin(f+.5));
+ ctx.moveTo(0,-7);ctx.lineTo(-13*Math.cos(-f+.5),-7+13*Math.sin(-f+.5));
+ ctx.moveTo(0,7);ctx.lineTo(10*Math.sin(f*1.4+.4),7+14*Math.cos(f*1.4+.4));
+ ctx.moveTo(0,7);ctx.lineTo(-10*Math.sin(-f*1.4+.4),7+14*Math.cos(-f*1.4+.4));
+ ctx.stroke();
+ ctx.fillStyle=CH().h;ctx.beginPath();ctx.arc(0,-18,8,0,7);ctx.fill();
+ ctx.fillStyle=CH().t;ctx.beginPath();ctx.arc(0,-20,8,Math.PI,0);ctx.fill();
+ ctx.restore();
+}
+let shake=0,parts=[],AC=null,eng=null;
+function initEng(){if(eng||!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type='sawtooth';o.frequency.value=60;g.gain.value=0;o.connect(g);g.connect(AC.destination);o.start();eng={o,g}}
+function beep(f,d,t,v){if(!AC)return;try{const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+function thud(v){if(!AC)return;try{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type='sine';o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(35,t+.25);g.gain.setValueAtTime(.5*v,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+.3)}catch(e){}}
+function dust(x,y,n){for(let i=0;i<n;i++)parts.push({x:x+(Math.random()-.5)*30,y:y-4,vx:(Math.random()-.5)*180,vy:-Math.random()*140,l:.7,m:.7,r:4+Math.random()*7})}
+function fx(dt){
+ for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=40*dt;p.vx*=.98;p.l-=dt}
+ parts=parts.filter(p=>p.l>0);
+ if(run&&!s.dead&&(gas&&s.fuel>0)&&Math.random()<.5){const gy=ground(s.x-26);if(s.y+27>gy-6)dust(s.x-26,gy,1)}
+ shake*=Math.pow(.02,dt);if(shake<.2)shake=0;
+ cv.style.transform=shake?'translate('+((Math.random()-.5)*shake)+'px,'+((Math.random()-.5)*shake)+'px)':'';
+ if(eng&&AC){const on=run&&!s.dead;const sp=Math.abs(s.vx);eng.o.frequency.setTargetAtTime(45+sp*.18+(gas&&s.fuel>0?25:0),AC.currentTime,.05);eng.g.gain.setTargetAtTime(on?(s.fuel>0?.035:0):0,AC.currentTime,.08)}
+}
+function drawFx(){
+ const T=s.rd||s,camX=T.x-W*0.32,camY=T.y-H*0.58;
+ for(const p of parts){ctx.globalAlpha=Math.max(0,p.l/p.m)*.7;ctx.fillStyle='#e8c89a';ctx.beginPath();ctx.arc(p.x-camX,p.y-camY,p.r*(1.4-p.l/p.m*.5),0,7);ctx.fill()}
+ ctx.globalAlpha=1;
+}
+function pick(k,i){cfg[k]=i;try{localStorage.setItem('mhc_cfg',JSON.stringify(cfg))}catch(e){}G=LV().g;reset();buildMenu()}
+function deco2(c){
+ const sh=BK().sh;if(!(sh>=5))return false;const col=COLORS[cfg.color];
+ c.fillStyle=col;c.strokeStyle=col;c.lineJoin='round';c.lineCap='round';
+ if(sh===5){
+  c.beginPath();c.moveTo(-22,-14);c.lineTo(0,-18);c.lineTo(14,-12);c.lineTo(32,0);c.lineTo(20,8);c.lineTo(-10,8);c.lineTo(-16,0);c.closePath();c.fill();
+  c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.moveTo(6,-16);c.lineTo(16,-27);c
